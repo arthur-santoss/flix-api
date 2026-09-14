@@ -3,6 +3,7 @@ from django.urls import path
 from genres.views import GenreCreateListView, GenreRetriveUpdateDestroyView
 from actors.views import ActorCreateListView, ActorRetriveUpdateDestroy
 from movies.views import MovieCreateListView, MovieRetrieveUpdateDestroyView
+from reviews.views import ReviewCreateListView, ReviewRetrieveUpdateDestroyView
 
 
 urlpatterns = [
@@ -15,7 +16,10 @@ urlpatterns = [
     path('actors/<int:pk>/', ActorRetriveUpdateDestroy.as_view(), name='actor-detail-view'),
 
     path('movies/', MovieCreateListView.as_view(), name='movie-create-list'),
-    path('movies/<int:pk>/', MovieRetrieveUpdateDestroyView.as_view(), name='movie-detail-view')
+    path('movies/<int:pk>/', MovieRetrieveUpdateDestroyView.as_view(), name='movie-detail-view'),
+
+    path('reviews/', ReviewCreateListView.as_view(), name='revies-create-list'),
+    path('reviews/<int:pk>/', ReviewRetrieveUpdateDestroyView.as_view(), name='review-detail-view')
 
     
 ]

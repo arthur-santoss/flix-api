@@ -1,0 +1,437 @@
+{
+	"info": {
+		"_postman_id": "f4b8a7c1-7d24-4e7d-b7a2-9a1e5d3c8f60",
+		"name": "Flix API",
+		"description": "Collection da Flix API (Django REST Framework).\n\n## Como usar\n\n1. Ajuste a variável `base_url` se necessário (padrão: `http://127.0.0.1:8000/api/v1`).\n2. Faça login em **POST /authentication/token/** com seu usuário e senha — o script da request salva o `access token` e o `refresh token` automaticamente nas variáveis da collection (`token` e `refresh`).\n3. Todas as outras requests usam `Bearer {{token}}` automaticamente.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://127.0.0.1:8000/api/v1",
+			"type": "string"
+		},
+		{
+			"key": "token",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "refresh",
+			"value": "",
+			"type": "string"
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{token}}",
+				"type": "string"
+			}
+		]
+	},
+	"item": [
+		{
+			"name": "Authentication",
+			"item": [
+				{
+					"name": "Obter token (login)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Status 200 - OK', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Resposta contém access e refresh tokens', function () {",
+									"    const data = pm.response.json();",
+									"    pm.expect(data).to.have.property('access');",
+									"    pm.expect(data).to.have.property('refresh');",
+									"});",
+									"",
+									"if (pm.response.code === 200) {",
+									"    const data = pm.response.json();",
+									"    pm.collectionVariables.set('token', data.access);",
+									"    pm.collectionVariables.set('refresh', data.refresh);",
+									"    console.log('Token salvo na variável {{token}} da collection!');",
+									"}"
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"seu_usuario\",\n    \"password\": \"sua_senha\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/authentication/token/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"authentication",
+								"token",
+								""
+							]
+						},
+						"description": "Autentica o usuário e retorna os tokens JWT (`access` e `refresh`).\n\nO script de resposta salva automaticamente os valores nas variáveis `{{token}}` e `{{refresh}}` da collection."
+					},
+					"response": []
+				},
+				{
+					"name": "Refresh token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Status 200 - OK', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"if (pm.response.code === 200) {",
+									"    const data = pm.response.json();",
+									"    pm.collectionVariables.set('token', data.access);",
+									"    console.log('Novo access token salvo na variável {{token}} da collection!');",
+									"}"
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"refresh\": \"{{refresh}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/authentication/token/refresh/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"authentication",
+								"token",
+								"refresh",
+								""
+							]
+						},
+						"description": "Gera um novo `access token` usando o `refresh token`. O script de resposta já atualiza a variável `{{token}}` automaticamente."
+					},
+					"response": []
+				},
+				{
+					"name": "Verificar token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Status 200 - Token válido', function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"token\": \"{{token}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/authentication/token/verify/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"authentication",
+								"token",
+								"verify",
+								""
+							]
+						},
+						"description": "Verifica se o token informado é válido. Retorna `200` se for válido e `401` caso contrário."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Genres",
+			"item": [
+				{
+					"name": "Listar / Criar gêneros",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/genres/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"genres",
+								""
+							]
+						},
+						"description": "**GET**: lista todos os gêneros.\n\n**POST**: cria um novo gênero.\n\nCorpo para POST:\n```json\n{\n    \"name\": \"Ação\"\n}\n```"
+					},
+					"response": []
+				},
+				{
+					"name": "Detalhar / Atualizar / Excluir gênero",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/genres/:id/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"genres",
+								":id",
+								""
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1",
+									"description": "ID do gênero"
+								}
+							]
+						},
+						"description": "**GET**: detalha um gênero.\n\n**PUT**: atualiza o gênero (todos os campos obrigatórios).\n**PATCH**: atualização parcial.\n**DELETE**: excluí o gênero.\n\nCorpo para PUT/PATCH:\n```json\n{\n    \"name\": \"Comédia\"\n}\n```"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Actors",
+			"item": [
+				{
+					"name": "Listar / Criar atores",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/actors/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"actors",
+								""
+							]
+						},
+						"description": "**GET**: lista todos os atores.\n\n**POST**: cria um novo ator.\n\nCorpo para POST:\n```json\n{\n    \"name\": \"Morgan Freeman\",\n    \"birthday\": \"1937-06-01\",\n    \"nationality\": \"USA\"\n}\n```\n\nValores possíveis para `nationality`: `USA` ou `BRAZIL` (padrão: `USA`)."
+					},
+					"response": []
+				},
+				{
+					"name": "Detalhar / Atualizar / Excluir ator",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/actors/:id/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"actors",
+								":id",
+								""
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1",
+									"description": "ID do ator"
+								}
+							]
+						},
+						"description": "**GET**: detalha um ator.\n\n**PUT**: atualiza o ator (todos os campos obrigatórios).\n**PATCH**: atualização parcial.\n**DELETE**: excluí o ator.\n\nCorpo para PUT/PATCH:\n```json\n{\n    \"name\": \"Morgan Freeman\",\n    \"birthday\": \"1937-06-01\",\n    \"nationality\": \"USA\"\n}\n```"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Movies",
+			"item": [
+				{
+					"name": "Listar / Criar filmes",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/movies/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"movies",
+								""
+							]
+						},
+						"description": "**GET**: lista todos os filmes com gênero, atores e rate (média das reviews).\n\n**POST**: cria um novo filme.\n\nCorpo para POST:\n```json\n{\n    \"title\": \"The Shawshank Redemption\",\n    \"genre\": 1,\n    \"release_date\": \"1994-09-23\",\n    \"actors\": [1, 2],\n    \"resume\": \"Dois prisioneiros formam uma amizade ao longo de vários anos.\"\n}\n```\n\n`genre` e `actors` recebem IDs. `release_date` e `resume` são opcionais (aceitam nulo)."
+					},
+					"response": []
+				},
+				{
+					"name": "Detalhar / Atualizar / Excluir filme",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/movies/:id/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"movies",
+								":id",
+								""
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1",
+									"description": "ID do filme"
+								}
+							]
+						},
+						"description": "**GET**: detalha um filme com gênero, atores e rate.\n\n**PUT**: atualiza o filme (todos os campos obrigatórios).\n**PATCH**: atualização parcial.\n**DELETE**: excluí o filme.\n\nCorpo para PUT/PATCH:\n```json\n{\n    \"title\": \"The Shawshank Redemption\",\n    \"genre\": 1,\n    \"release_date\": \"1994-09-23\",\n    \"actors\": [1, 2],\n    \"resume\": \"Dois prisioneiros formam uma amizade ao longo de vários anos.\"\n}\n```"
+					},
+					"response": []
+				},
+				{
+					"name": "Estatísticas dos filmes",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/movies/stats/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"movies",
+								"stats",
+								""
+							]
+						},
+						"description": "Retorna estatísticas gerais:\n\n- `total_movies`: total de filmes\n- `movies_by_genre`: quantidade de filmes por gênero\n- `total_reviews`: total de reviews\n- `average_stars`: média de estrelas das reviews\n\nResposta de exemplo:\n```json\n{\n    \"total_movies\": 10,\n    \"movies_by_genre\": [\n        {\"genre__name\": \"Ação\", \"count\": 4}\n    ],\n    \"total_reviews\": 25,\n    \"average_stars\": 4.2\n}\n```"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Reviews",
+			"item": [
+				{
+					"name": "Listar / Criar reviews",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/reviews/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"reviews",
+								""
+							]
+						},
+						"description": "**GET**: lista todas as reviews.\n\n**POST**: cria uma nova review.\n\nCorpo para POST:\n```json\n{\n    \"movie\": 1,\n    \"stars\": 5,\n    \"comment\": \"Excelente filme!\"\n}\n```\n\n`stars` aceita valores de `0` a `5`. `comment` é opcional (aceita nulo)."
+					},
+					"response": []
+				},
+				{
+					"name": "Detalhar / Atualizar / Excluir review",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/reviews/:id/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"reviews",
+								":id",
+								""
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1",
+									"description": "ID da review"
+								}
+							]
+						},
+						"description": "**GET**: detalha uma review.\n\n**PUT**: atualiza a review (todos os campos obrigatórios).\n**PATCH**: atualização parcial.\n**DELETE**: excluí a review.\n\nCorpo para PUT/PATCH:\n```json\n{\n    \"movie\": 1,\n    \"stars\": 4,\n    \"comment\": \"Muito bom, mas o final poderia ser melhor.\"\n}\n```"
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

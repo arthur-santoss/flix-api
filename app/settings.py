@@ -47,7 +47,7 @@ INSTALLED_APPS = [
     'genres',
     'actors',
     'movies',
-    'reviews',    
+    'reviews',
 ]
 
 MIDDLEWARE = [
@@ -145,4 +145,3 @@ SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=20),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
 }
-

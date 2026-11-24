@@ -6,4 +6,3 @@ urlpatterns = [
     path('authentication/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('authentication/token/verify/', TokenVerifyView.as_view(), name='token_verify'),
 ]
-

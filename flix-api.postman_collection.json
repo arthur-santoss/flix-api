@@ -2,7 +2,7 @@
 	"info": {
 		"_postman_id": "f4b8a7c1-7d24-4e7d-b7a2-9a1e5d3c8f60",
 		"name": "Flix API",
-		"description": "Collection da Flix API (Django REST Framework).\n\n## Como usar\n\n1. Ajuste a variável `base_url` se necessário (padrão: `http://127.0.0.1:8000/api/v1`).\n2. Faça login em **POST /authentication/token/** com seu usuário e senha — o script da request salva o `access token` e o `refresh token` automaticamente nas variáveis da collection (`token` e `refresh`).\n3. Todas as outras requests usam `Bearer {{token}}` automaticamente.",
+		"description": "Collection da Flix API (Django REST Framework).\n\n## Como usar\n\n1. Ajuste a variável `base_url` se necessário (padrão: `http://127.0.0.1:8000/api/v1`).\n2. Faça login em **POST /authentication/token/** com seu usuário e senha - o script da request salva o `access token` e o `refresh token` automaticamente nas variáveis da collection (`token` e `refresh`).\n3. Todas as outras requests usam `Bearer {{token}}` automaticamente.",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"variable": [
